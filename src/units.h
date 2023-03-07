@@ -1,10 +1,14 @@
 #include <gb/gb.h>
 
+#include <stdlib.h>
+
 #include "stdio.h"
 
 #define MAX_SPRITES 40
 
 #define NR_PLAYER_UNITS 10
+#define NR_ENEMY_UNITS 10
+
 #define MAX_SPEED 5
 #define SPAWN_COOLDOWN 2
 
@@ -14,8 +18,8 @@
 
 // Player units
 typedef struct {
-    // Stats
     uint8_t tileID;
+    // Stats
     uint8_t x;
     uint8_t y;
     int hp;
@@ -35,14 +39,23 @@ typedef struct {
 
 // Enemies
 typedef struct {
+    uint8_t tileID;
+    // Stats
     uint8_t x;
     uint8_t y;
     int hp;
     int dmg;
     int atkspd;
-    int spd;
+    int speed;
     uint8_t range;
  // uint8_t firstwave;
+
+    // Other Vars
+    uint8_t frame_counter;
+    uint8_t alive;
+
+    // Program Vars
+    uint8_t spriteID;
 } Enemy;
 
 // Classes init
@@ -63,3 +76,7 @@ typedef struct {
 // Functions
 void spawn_unit(Unit *unit, Unit *unit_group);
 void move_unit(Unit *unit);
+uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group);
+void spawn_enemy(Enemy *unit, Enemy *unit_group);
+void move_enemy(Enemy *unit);
+uint8_t get_closest_unit(Enemy *unit, Unit *unit_group);

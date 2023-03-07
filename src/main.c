@@ -1,15 +1,17 @@
 #include <gb/gb.h>
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
 
-#include "../res/dungeon_map.h"
-#include "../res/dungeon_tiles.h"
 #include "../res/test.h"
 #include "units.h"
 
+#define RANGE_UNIT 8
+
 // Global Vars
 Unit player_units[NR_PLAYER_UNITS] = {{0}};
+Enemy enemy_units[NR_ENEMY_UNITS] = {{0}};
 
 uint8_t prev_input, curr_input = 0;
 
@@ -27,8 +29,7 @@ Unit Soldier = {
     1,   // Spd
     1,   // Range
     0,
-    1    
-};
+    0};
 
 Unit Archer = {
     2,   // Tile ID
@@ -40,8 +41,20 @@ Unit Archer = {
     1,   // Spd
     1,   // Range
     0,
-    0
-};
+    0};
+
+Enemy Goblin = {
+    6,   // Tile ID
+    120, // X position
+    50,  // Y position
+    50,  // HP
+    10,  // DMG
+    1,   // Atk Spd
+    1,   // Spd
+    1,   // Range
+    0,
+    0};
+
 // End of Test Vars
 
 void init_gfx()
@@ -54,7 +67,7 @@ void init_gfx()
     // SHOW_BKG;
 
     SPRITES_8x8;
-    set_sprite_data(0, 5, tiles);
+    set_sprite_data(0, 7, tiles);
     set_sprite_tile(0, 1);
     set_sprite_tile(1, 2);
     move_sprite(0, x, y);
@@ -63,8 +76,10 @@ void init_gfx()
     SHOW_SPRITES;
 }
 
-void init_units(Unit *unit_group){
-    for (int i = 0; i < NR_PLAYER_UNITS; i++){
+void init_units(Unit *unit_group)
+{
+    for (int i = 0; i < NR_PLAYER_UNITS; i++)
+    {
         unit_group[i].alive = 0;
     }
 }
@@ -76,16 +91,17 @@ void main(void)
 
     spawn_unit(&Soldier, player_units);
 
-    for (int i = 0; i < NR_PLAYER_UNITS; i++){
+    spawn_enemy(&Goblin, enemy_units);
+
+    for (int i = 0; i < NR_PLAYER_UNITS; i++)
+    {
         printf("%d: %d\n", i, player_units[i].alive);
     }
-
-    // Joypad input
 
     // Loop forever
     while (1)
     {
-        //printf("%d\n", sys_time);
+        // printf("%d\n", sys_time);
 
         prev_input = curr_input;
         curr_input = joypad();
@@ -102,11 +118,34 @@ void main(void)
             delay(100);
         }
 
-
-        for (int i = 0; i < NR_PLAYER_UNITS; i++){
-            if (player_units[i].alive == 1) {
-                move_unit(&player_units[i]);
+        for (int i = 0; i < NR_PLAYER_UNITS; i++)
+        {
+            if (player_units[i].alive == 1)
+            {
+                if ((get_closest_enemy(&player_units[i], enemy_units)) < player_units[i].range * RANGE_UNIT)
+                {
+                    // Attack?
+                }
+                else
+                {
+                    move_unit(&player_units[i]);
+                }
                 // printf("%d: %d\n", i, player_units[i].alive);
+            }
+        }
+
+        for (int i = 0; i < NR_ENEMY_UNITS; i++)
+        {
+            if (enemy_units[i].alive == 1)
+            {
+                if ((get_closest_unit(&enemy_units[i], player_units)) < enemy_units[i].range * RANGE_UNIT)
+                {
+                    // Attack?
+                }
+                else
+                {
+                    move_enemy(&enemy_units[i]);
+                }
             }
         }
 
