@@ -25,9 +25,10 @@ Unit Soldier = {
     50,  // Y position
     100, // HP
     25,  // DMG
-    1,   // Atk Spd
+    10,   // Atk Spd
     1,   // Spd
     1,   // Range
+    0,
     0,
     0};
 
@@ -37,9 +38,10 @@ Unit Archer = {
     50,  // Y position
     100, // HP
     25,  // DMG
-    1,   // Atk Spd
+    15,   // Atk Spd
     1,   // Spd
     1,   // Range
+    0,
     0,
     0};
 
@@ -49,9 +51,10 @@ Enemy Goblin = {
     50,  // Y position
     50,  // HP
     10,  // DMG
-    1,   // Atk Spd
+    10,   // Atk Spd
     1,   // Spd
     1,   // Range
+    0,   // 
     0,
     0};
 
@@ -122,9 +125,10 @@ void main(void)
         {
             if (player_units[i].alive == 1)
             {
-                if ((get_closest_enemy(&player_units[i], enemy_units)) < player_units[i].range * RANGE_UNIT)
+                uint8_t closestID;
+                if ((get_closest_enemy(&player_units[i], enemy_units, &closestID)) < player_units[i].range * RANGE_UNIT)
                 {
-                    // Attack?
+                    atk_enemy(&player_unit[i], &enemy_units[closestID]);
                 }
                 else
                 {
@@ -138,7 +142,8 @@ void main(void)
         {
             if (enemy_units[i].alive == 1)
             {
-                if ((get_closest_unit(&enemy_units[i], player_units)) < enemy_units[i].range * RANGE_UNIT)
+                uint8_t ID;
+                if ((get_closest_unit(&enemy_units[i], player_units, &ID)) < enemy_units[i].range * RANGE_UNIT)
                 {
                     // Attack?
                 }

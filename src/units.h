@@ -10,6 +10,7 @@
 #define NR_ENEMY_UNITS 10
 
 #define MAX_SPEED 5
+#define ATKSPD_MULT 6
 #define SPAWN_COOLDOWN 2
 
 // Unit Strcuts
@@ -31,6 +32,7 @@ typedef struct {
     
     //Other Vats
     uint8_t frame_counter;
+    int atkspd_counter;
     uint8_t alive;
 
     // Program Vars
@@ -52,6 +54,7 @@ typedef struct {
 
     // Other Vars
     uint8_t frame_counter;
+    int atkspd_counter;
     uint8_t alive;
 
     // Program Vars
@@ -76,7 +79,9 @@ typedef struct {
 // Functions
 void spawn_unit(Unit *unit, Unit *unit_group);
 void move_unit(Unit *unit);
-uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group);
+uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group, uint8_t *returnID);
+void atk_enemy(Unit *unit, Enemy *enemy);
+
 void spawn_enemy(Enemy *unit, Enemy *unit_group);
 void move_enemy(Enemy *unit);
 uint8_t get_closest_unit(Enemy *unit, Unit *unit_group);

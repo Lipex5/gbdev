@@ -3,7 +3,7 @@
 int cooldown = SPAWN_COOLDOWN * 60; // Secs
 int next_use = 0;
 
-// Unit functions
+// ========= Unit functions
 
 void spawn_unit(Unit *unit, Unit *unit_group)
 {
@@ -45,16 +45,27 @@ void move_unit(Unit *unit)
         unit->frame_counter--;
 }
 
-uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group){
+uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group, uint8_t *returnID){
     uint8_t closest = 254;
     for (int i = 0; i < 1; i++){
-        if (abs(unit_group[i].x - unit->x) < closest) closest = abs(unit_group[i].x - unit->x);
+        if (abs(unit_group[i].x - unit->x) < closest) {
+            closest = abs(unit_group[i].x - unit->x);
+            *returnID = i;
+        }
     }
     return closest;
 }
 
+void atk_enemy(Unit *unit, Enemy *enemy){
+    if (sys_time > unit->atkspd_counter)
+    {
+        enemy->hp -= unit->dmg;
+        unit->atkspd_counter = sys_time + (ATKSPD_MULT * unit->atkspd);
+    }
+}
 
-// Enemy Functions
+
+// ============= Enemy Functions
 
 void spawn_enemy(Enemy *unit, Enemy *unit_group)
 {
