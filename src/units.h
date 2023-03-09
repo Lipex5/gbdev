@@ -81,7 +81,9 @@ void spawn_unit(Unit *unit, Unit *unit_group);
 void move_unit(Unit *unit);
 uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group, uint8_t *returnID);
 void atk_enemy(Unit *unit, Enemy *enemy);
+void kill_unit (Unit *unit);
 
 void spawn_enemy(Enemy *unit, Enemy *unit_group);
 void move_enemy(Enemy *unit);
 uint8_t get_closest_unit(Enemy *unit, Unit *unit_group);
+void kill_enemy (Enemy *enemy);

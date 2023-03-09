@@ -48,7 +48,7 @@ void move_unit(Unit *unit)
 uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group, uint8_t *returnID){
     uint8_t closest = 254;
     for (int i = 0; i < 1; i++){
-        if (abs(unit_group[i].x - unit->x) < closest) {
+        if (unit_group[i].alive && abs(unit_group[i].x - unit->x) < closest) {
             closest = abs(unit_group[i].x - unit->x);
             *returnID = i;
         }
@@ -62,6 +62,11 @@ void atk_enemy(Unit *unit, Enemy *enemy){
         enemy->hp -= unit->dmg;
         unit->atkspd_counter = sys_time + (ATKSPD_MULT * unit->atkspd);
     }
+}
+
+void kill_unit (Unit *unit){
+    unit->spriteID = 0;
+    unit->alive = 0;
 }
 
 
@@ -109,4 +114,10 @@ uint8_t get_closest_unit(Enemy *unit, Unit *unit_group){
         if (abs(unit_group[i].x - unit->x) < closest) closest = abs(unit_group[i].x - unit->x);
     }
     return closest;
+}
+
+void kill_enemy (Enemy *enemy){
+    set_sprite_tile(enemy->spriteID, 0);
+    enemy->spriteID = 0;
+    enemy->alive = 0;
 }

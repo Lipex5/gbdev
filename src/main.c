@@ -40,7 +40,7 @@ Unit Archer = {
     25,  // DMG
     15,   // Atk Spd
     1,   // Spd
-    1,   // Range
+    3,   // Range
     0,
     0,
     0};
@@ -128,12 +128,15 @@ void main(void)
                 uint8_t closestID;
                 if ((get_closest_enemy(&player_units[i], enemy_units, &closestID)) < player_units[i].range * RANGE_UNIT)
                 {
-                    atk_enemy(&player_unit[i], &enemy_units[closestID]);
+                    atk_enemy(&player_units[i], &enemy_units[closestID]);
+                    printf("%d\n", enemy_units[closestID].hp);
                 }
                 else
                 {
                     move_unit(&player_units[i]);
                 }
+
+                if (player_units[i].hp <= 0) player_units[i].alive = 0;
                 // printf("%d: %d\n", i, player_units[i].alive);
             }
         }
@@ -142,14 +145,19 @@ void main(void)
         {
             if (enemy_units[i].alive == 1)
             {
-                uint8_t ID;
-                if ((get_closest_unit(&enemy_units[i], player_units, &ID)) < enemy_units[i].range * RANGE_UNIT)
+                if ((get_closest_unit(&enemy_units[i], player_units)) < enemy_units[i].range * RANGE_UNIT)
                 {
                     // Attack?
                 }
                 else
                 {
                     move_enemy(&enemy_units[i]);
+                }
+
+                if (enemy_units[i].hp <= 0)
+                {
+                    printf("HERE!\n");
+                    kill_enemy(&enemy_units[i]);
                 }
             }
         }
