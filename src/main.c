@@ -2,8 +2,12 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
+// #include <stdio.h>
 
+
+#include "../res/sprites.h"
+#include "../res/tiles.h"
+#include "../res/map.h"
 #include "../res/test.h"
 #include "units.h"
 
@@ -63,11 +67,8 @@ Enemy Goblin = {
 void init_gfx()
 {
     // Load Background tiles and then map
-    // set_bkg_data(0, 79u, dungeon_tiles);
-    // set_bkg_tiles(0, 0, 32u, 32u, dungeon_mapPLN0);
-
-    // Turn the background map on to make it visible
-    // SHOW_BKG;
+    set_bkg_data(0, 48, Tiles);
+    set_bkg_tiles(0, 0, MapWidth, MapHeight, Map);
 
     SPRITES_8x8;
     set_sprite_data(0, 7, tiles);
@@ -77,6 +78,10 @@ void init_gfx()
     move_sprite(1, x + 50, y);
 
     SHOW_SPRITES;
+
+    SHOW_BKG;
+
+    DISPLAY_ON;
 }
 
 void init_units(Unit *unit_group)
@@ -87,6 +92,20 @@ void init_units(Unit *unit_group)
     }
 }
 
+
+
+void unit_scroll_correct(Unit *unit, uint8_t posdir){
+    if (posdir) unit->x -= 1;
+    else unit->x += 1;
+}
+
+void enemy_scroll_correct(Enemy *enemy, uint8_t posdir){
+    if (posdir) enemy->x -= 1;
+    else enemy->x += 1;
+}
+
+
+
 void main(void)
 {
     init_gfx();
@@ -96,30 +115,56 @@ void main(void)
 
     spawn_enemy(&Goblin, enemy_units);
 
-    for (int i = 0; i < NR_PLAYER_UNITS; i++)
-    {
-        printf("%d: %d\n", i, player_units[i].alive);
-    }
-
     // Loop forever
     while (1)
     {
         // printf("%d\n", sys_time);
 
+        // for (int i = 0; i < NR_PLAYER_UNITS; i++)
+        // {
+        //     printf("%d: %d\n", i, player_units[i].x);
+        // }
+
         prev_input = curr_input;
         curr_input = joypad();
 
-        if ((curr_input & J_A) && !(prev_input & J_A))
-        {
-            spawn_unit(&Soldier, player_units);
-            delay(100);
+        if (curr_input & J_A){
+            scroll_bkg(1, 0);
+            for (int i = 0; i < NR_PLAYER_UNITS; i++) {
+                if (player_units[i].alive){
+                    unit_scroll_correct(&player_units[i], 1);
+                }
+
+                if (enemy_units[i].alive){
+                    enemy_scroll_correct(&enemy_units[i], 1);
+                }
+            }
         }
 
-        if ((curr_input & J_B) && !(prev_input & J_B))
-        {
-            spawn_unit(&Archer, player_units);
-            delay(100);
+        if (curr_input & J_B){
+            scroll_bkg(-1, 0);
+            for (int i = 0; i < NR_PLAYER_UNITS; i++) {
+                if (player_units[i].alive){
+                    unit_scroll_correct(&player_units[i], 0);
+                }
+
+                if (enemy_units[i].alive){
+                    enemy_scroll_correct(&enemy_units[i], 0);
+                }
+            }
         }
+
+        // if ((curr_input & J_A) && !(prev_input & J_A))
+        // {
+        //     spawn_unit(&Soldier, player_units);
+        //     delay(100);
+        // }
+
+        // if ((curr_input & J_B) && !(prev_input & J_B))
+        // {
+        //     spawn_unit(&Archer, player_units);
+        //     delay(100);
+        // }
 
         for (int i = 0; i < NR_PLAYER_UNITS; i++)
         {
@@ -129,7 +174,7 @@ void main(void)
                 if ((get_closest_enemy(&player_units[i], enemy_units, &closestID)) < player_units[i].range * RANGE_UNIT)
                 {
                     atk_enemy(&player_units[i], &enemy_units[closestID]);
-                    printf("%d\n", enemy_units[closestID].hp);
+                    // printf("%d\n", enemy_units[closestID].hp);
                 }
                 else
                 {
@@ -156,7 +201,7 @@ void main(void)
 
                 if (enemy_units[i].hp <= 0)
                 {
-                    printf("HERE!\n");
+                    // printf("HERE!\n");
                     kill_enemy(&enemy_units[i]);
                 }
             }

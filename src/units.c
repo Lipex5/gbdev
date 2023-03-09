@@ -24,7 +24,7 @@ void spawn_unit(Unit *unit, Unit *unit_group)
                         unit_group[j].spriteID = i;
                         unit_group[j].alive = 1;
                         next_use = sys_time + cooldown;
-                        printf("Spawned Unit\n");
+                        // printf("Spawned Unit\n");
                         return;
                     }
                 }
@@ -38,7 +38,8 @@ void move_unit(Unit *unit)
     if (unit->frame_counter == 0)
     {
         unit->x += 1;
-        move_sprite(unit->spriteID, unit->x, unit->y);
+        // move_sprite(unit->spriteID, unit->x, unit->y);
+        scroll_sprite(unit->spriteID, 1, 0);
         unit->frame_counter = MAX_SPEED - unit->speed;
     }
     else
@@ -88,7 +89,7 @@ void spawn_enemy(Enemy *unit, Enemy *unit_group)
                     unit_group[j] = *unit;
                     unit_group[j].spriteID = i;
                     unit_group[j].alive = 1;
-                    printf("Spawned Enemy\n");
+                    // printf("Spawned Enemy\n");
                     return;
                 }
             }
@@ -118,6 +119,7 @@ uint8_t get_closest_unit(Enemy *unit, Unit *unit_group){
 
 void kill_enemy (Enemy *enemy){
     set_sprite_tile(enemy->spriteID, 0);
+    hide_sprite(enemy->spriteID);
     enemy->spriteID = 0;
     enemy->alive = 0;
 }
