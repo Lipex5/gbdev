@@ -34,6 +34,8 @@ typedef struct {
     uint8_t frame_counter;
     int atkspd_counter;
     uint8_t alive;
+    uint8_t newx;
+    uint8_t newy;
 
     // Program Vars
     uint8_t spriteID;
@@ -56,6 +58,8 @@ typedef struct {
     uint8_t frame_counter;
     int atkspd_counter;
     uint8_t alive;
+    uint8_t newx;
+    uint8_t newy;
 
     // Program Vars
     uint8_t spriteID;
@@ -77,13 +81,15 @@ typedef struct {
 
 
 // Functions
-void spawn_unit(Unit *unit, Unit *unit_group);
-void move_unit(Unit *unit);
-uint8_t get_closest_enemy(Unit *unit, Enemy *unit_group, uint8_t *returnID);
+void spawn_unit(Unit *unit, Unit *unit_group, uint8_t x, uint8_t y);
+
+void move_unit(Unit *unit, int8_t x, int8_t y);
+uint8_t get_closest_enemy(Unit *unit, Enemy *enemy_group, uint8_t *returnID);
 void atk_enemy(Unit *unit, Enemy *enemy);
 void kill_unit (Unit *unit);
 
-void spawn_enemy(Enemy *unit, Enemy *unit_group);
-void move_enemy(Enemy *unit);
-uint8_t get_closest_unit(Enemy *unit, Unit *unit_group);
+void spawn_enemy(Enemy *enemy, Enemy *enemy_group, uint8_t x, uint8_t y);
+void move_enemy(Enemy *enemy, int8_t x, int8_t y);
+uint8_t get_closest_unit(Enemy *enemy, Unit *unit_group, uint8_t *returnID);
+void atk_unit(Enemy *enemy, Unit *unit);
 void kill_enemy (Enemy *enemy);
